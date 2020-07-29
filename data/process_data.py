@@ -14,10 +14,61 @@ def load_data(messages_filepath, categories_filepath):
 
 def clean_data(df):
     print(df.shape)
+    
+    # create a dataframe of the 36 individual category columns
+    categories = df['categories'].str.split(';', expand=True)
+    
+    # select the first row of the categories dataframe
+    row = categories.iloc[0, :]
+
+    # use this row to extract a list of new column names for categories.
+    # one way is to apply a lambda function that takes everything 
+    # up to the second to last character of each string with slicing
+    category_colnames = row.str.split('-').str[0]
+    print(category_colnames)
+    
+    
+    # rename the columns of `categories`
+    categories.columns = category_colnames
+    
+    #Loop over columns and remove text; convert values to  0 or 1
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] = categories[column].str[-1]
+
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+    
+    
+    #Check if any columns have an invalid value (should only be 1 or 0)
+    cols = ((categories.max() > 1) | (categories.min() < 0))
+    #Get the names of invalid columns
+    col_indexes = cols[cols].index
+
+    #Print column names of invalid columns
+    print(col_indexes)
+
+    rows_with_invalid_related_rows = categories.related > 1
+    categories.loc[rows_with_invalid_related_rows, 'related'] = 1
+
+    
+    # drop the original categories column from `df`
+    df.drop(columns=['categories'], inplace=True)
+    
+    # concatenate the original dataframe with the new `categories` dataframe
+    df = pd.concat([df, categories], axis=1)
+    
+    # drop duplicates
+    df = df.drop_duplicates()
+    
+    return df
+
     pass
 
 
 def save_data(df, database_filename):
+    print('save_data function exceuting...')
+    print(df.shape)
     pass  
 
 
@@ -34,7 +85,7 @@ def main():
         df = clean_data(df)
         
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        #save_data(df, database_filepath)
+        save_data(df, database_filepath)
         
         print('Cleaned data saved to database!')
     
