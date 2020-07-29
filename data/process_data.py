@@ -1,11 +1,19 @@
 import sys
-
+import pandas as pd
+import numpy as np
+import sqlalchemy as np
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    
+    df = pd.concat([messages, categories], axis=1)
+    
+    return df
 
 
 def clean_data(df):
+    print(df.shape)
     pass
 
 
@@ -26,7 +34,7 @@ def main():
         df = clean_data(df)
         
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        save_data(df, database_filepath)
+        #save_data(df, database_filepath)
         
         print('Cleaned data saved to database!')
     
