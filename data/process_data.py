@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import numpy as np
-import sqlalchemy as np
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     messages = pd.read_csv(messages_filepath)
@@ -69,6 +69,8 @@ def clean_data(df):
 def save_data(df, database_filename):
     print('save_data function exceuting...')
     print(df.shape)
+    engine = create_engine('sqlite:///' + database_filename)
+    df.to_sql('messages', engine, index=False, if_exists='replace')
     pass  
 
 
