@@ -55,15 +55,37 @@ def tokenize(text):
 
 
 def build_model():
-    pass
+    pipeline = Pipeline([
+    ('text_pipeline', Pipeline([
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer())
+    ])),
+
+    ('mo_clf', MultiOutputClassifier(RandomForestClassifier()))
+    #('mo_clf', SVC())
+    ])
+    
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    
+    Y_pred = pipeline.predict(X_test)
+    
+    #iterate over columns
+    for col_num in range(Y_pred.shape[1]):
+        print('Classification Report For Class: ' + category_names)
+        report = classification_report(Y_test.values[:,col_num], Y_pred[:,col_num])
+        print(report)
+
     pass
 
 
 def save_model(model, model_filepath):
-    pass
+    
+    pickle.dump(model,open(model_filepath,'wb'))
+    
+    #pass
 
 
 def main():
@@ -75,16 +97,16 @@ def main():
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
-        #model = build_model()
+        model = build_model()
         
         print('Training model...')
-        #model.fit(X_train, Y_train)
+        model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        #evaluate_model(model, X_test, Y_test, category_names)
+        evaluate_model(model, X_test, Y_test, category_names)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
-        #save_model(model, model_filepath)
+        save_model(model, model_filepath)
 
         print('Trained model saved!')
 
