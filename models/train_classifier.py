@@ -52,6 +52,7 @@ def tokenize(text):
 
 
 def build_model():
+   
     pipeline = Pipeline([
     ('text_pipeline', Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -62,7 +63,20 @@ def build_model():
     #('mo_clf', SVC())
     ])
     
-    return pipeline
+    #Parameters to use in GridSearch optimisation
+    parameters = {
+        'text_pipeline__vect__ngram_range': [(1, 2)],
+        'text_pipeline__vect__max_df': [0.75],
+        'text_pipeline__vect__max_features': [10000],
+        'text_pipeline__tfidf__use_idf': [True],
+        'mo_clf__estimator__n_estimators': [10],
+        'mo_clf__estimator__min_samples_split': [4]
+    }
+
+    start = time.process_time()
+    model = GridSearchCV(pipeline, param_grid=parameters,  n_jobs=-1, verbose=10, scoring='f1_macro', cv=None)
+    
+    return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
