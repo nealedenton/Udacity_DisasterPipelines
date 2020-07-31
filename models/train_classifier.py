@@ -32,12 +32,26 @@ def load_data(database_filepath):
     engine = create_engine(create_engine_argument)
     df = pd.read_sql_table('messages', engine)
     print(df.shape)
-    return df
-    pass
+    
+    X = df.message
+    Y = df.drop(columns=['message','genre', 'id', 'original'], axis=1) 
+    category_names = Y.columns
+    return X, Y, category_names
+    
 
 
 def tokenize(text):
-    pass
+    tokens = word_tokenize(text)
+    
+    lemmatizer = WordNetLemmatizer()
+
+    clean_tokens = []
+    
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+    
+    return clean_tokens
 
 
 def build_model():
