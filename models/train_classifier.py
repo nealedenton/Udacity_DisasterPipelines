@@ -5,24 +5,21 @@ nltk.download(['punkt', 'wordnet'])
 # import libraries
 import pandas as pd
 import numpy as np
+import time
+import pickle
+
 from sqlalchemy import create_engine
 
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
 from sklearn.multioutput import MultiOutputClassifier
-
 from sklearn.model_selection import train_test_split
-
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 from sklearn.pipeline import Pipeline, FeatureUnion
-
 from sklearn.ensemble import RandomForestClassifier
-
 from sklearn.svm import SVC
-
 from sklearn.metrics import classification_report #multilabel_confusion_matrix
-
 from sklearn.model_selection import GridSearchCV
 
 def load_data(database_filepath):
@@ -70,7 +67,7 @@ def build_model():
 
 def evaluate_model(model, X_test, Y_test, category_names):
     
-    Y_pred = pipeline.predict(X_test)
+    Y_pred = model.predict(X_test)
     
     #iterate over columns
     for col_num in range(Y_pred.shape[1]):
