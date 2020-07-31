@@ -1,5 +1,6 @@
 import json
 import plotly
+#import plotly.graph_objs as go
 import pandas as pd
 
 from nltk.stem import WordNetLemmatizer
@@ -43,6 +44,18 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Category
+    category_series = df.drop(['id', 'message', 'original', 'genre'], axis=1).sum()
+    category_series.sort_values(ascending=False, inplace=True)
+    category_counts = category_series[0:10]
+    category_names = list(category_series.index)[0:10]
+    
+    
+    # Corr
+    category_df = df.drop(['id', 'message', 'original', 'genre'], axis=1)
+    corr = category_df.corr()
+    corr_labels = list(corr.columns)
+    corr_values = corr.values
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -63,8 +76,41 @@ def index():
                     'title': "Genre"
                 }
             }
-        }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Top 10 Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        },
+        
     ]
+    
+    
+    graph = []
+    graph.append(
+          plotly.graph_objs.Heatmap(
+            z = corr_values,
+            y = corr_labels,
+            x = corr_labels
+          )
+      )
+    layout = dict(title = 'Correlation Matrix of Message Categories',
+                 xaxis = dict(title='x'))
+    
+    graphs.append(dict(data=graph, layout=layout))
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
@@ -72,7 +118,7 @@ def index():
     
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
-
+   
 
 # web page that handles user query and displays model results
 @app.route('/go')
