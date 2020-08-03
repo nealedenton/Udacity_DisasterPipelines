@@ -4,6 +4,13 @@ import numpy as np
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    '''
+    INPUT:
+    messages_filepath - (string) a valid filepath for the messages csv file
+    categories_filepath - (string) a valid filepath for the categories csv file
+    OUTPUT:
+    df - (df) a merged dataframe of messages and categories
+    '''
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     
@@ -13,6 +20,12 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    '''
+    INPUT:
+    df - (df) a dataframe of messages and their categories that needs to be cleaned
+    OUTPUT:
+    df - (df) a cleaned dataframe - creates dummy binary variables for each message category 
+    '''
     print(df.shape)
     
     # create a dataframe of the 36 individual category columns
@@ -67,6 +80,13 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    '''
+    INPUT:
+    df - (df) the dataframe to be saved as a database table called "messages"
+    database_filename - (string) a valid filepath to save the database to
+    
+    Saves the dataframe in a SQL database referenced by database_filename
+    '''
     print('save_data function exceuting...')
     print(df.shape)
     engine = create_engine('sqlite:///' + database_filename)
@@ -75,6 +95,9 @@ def save_data(df, database_filename):
 
 
 def main():
+    '''
+    Load, clean and save the data
+    '''
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]

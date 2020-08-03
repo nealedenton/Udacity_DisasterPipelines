@@ -16,6 +16,13 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    '''
+    INPUT:
+    text - text to clean and lemmatize
+        
+    OUTPUT:
+    clean_tokens - cleaned and lemmatized text
+    '''
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -139,6 +146,10 @@ def go():
 
 
 def main():
+    '''
+    Starts the application
+    
+    '''    
     app.run(host='0.0.0.0', port=3001, debug=True)
 
 

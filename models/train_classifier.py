@@ -24,6 +24,15 @@ from sklearn.model_selection import GridSearchCV
 
 def load_data(database_filepath):
     # load data from database
+    '''
+    INPUT:
+    database_filepath - (string) a valid filepath to a messages database file to load
+    
+    OUTPUT:
+    X - (df) a dataframe of the messages to classify
+    Y - (df) a dataframe of the message categories
+    category_names - (list)
+    '''
     create_engine_argument = 'sqlite:///{}'.format(database_filepath)
     print(create_engine_argument)
     engine = create_engine(create_engine_argument)
@@ -38,6 +47,13 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    '''
+    INPUT:
+    text - text to clean and lemmatize
+        
+    OUTPUT:
+    clean_tokens - cleaned and lemmatized text
+    '''
     tokens = word_tokenize(text)
     
     lemmatizer = WordNetLemmatizer()
@@ -52,6 +68,10 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    OUTPUT:
+    model - GridSearchCV object to classify messages
+    '''
    
     pipeline = Pipeline([
     ('text_pipeline', Pipeline([
@@ -80,7 +100,15 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+    INPUT:
+    model - SciKit Learn model
+    X_test - test messages to classify
+    Y_test - categories of messages being classified
+    category_names - list of message categories
     
+    Outputs classification report
+    '''
     Y_pred = model.predict(X_test)
     
     #iterate over columns
@@ -93,13 +121,22 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    
+    '''
+    INPUT:
+    model - the model to save
+    model_filepath - directory to save model to
+        
+    Saves model as pickle file in directory referenced by model_filepath
+    '''
     pickle.dump(model,open(model_filepath,'wb'))
     
     #pass
 
 
 def main():
+    '''
+    Run the classifier
+    '''
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print(dir())
