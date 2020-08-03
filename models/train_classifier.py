@@ -65,12 +65,12 @@ def build_model():
     
     #Parameters to use in GridSearch optimisation
     parameters = {
-        'text_pipeline__vect__ngram_range': [(1, 2)],
-        'text_pipeline__vect__max_df': [0.75],
-        'text_pipeline__vect__max_features': [10000],
-        'text_pipeline__tfidf__use_idf': [True],
-        'mo_clf__estimator__n_estimators': [10],
-        'mo_clf__estimator__min_samples_split': [4]
+    'text_pipeline__vect__ngram_range': ((1, 1), (1, 2)),
+    'text_pipeline__vect__max_df': (0.5, 0.75, 1.0),
+    'text_pipeline__vect__max_features': (None, 5000, 10000),
+    'text_pipeline__tfidf__use_idf': (True, False),
+    'mo_clf__estimator__n_estimators': [5, 10],
+    'mo_clf__estimator__min_samples_split': [2, 4]
     }
 
     start = time.process_time()
